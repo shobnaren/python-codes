@@ -1,0 +1,14 @@
+devices:
+  mydev:
+    os: linux
+    type: linux
+    tacacs:
+      username: demo
+    passwords:
+      linux: password
+    connections:
+      defaults:
+        class: 'unicon.Unicon'
+      linux:
+        protocol: ssh
+        ip: test.rebex.net

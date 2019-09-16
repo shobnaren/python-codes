@@ -1,0 +1,55 @@
+import paramiko
+import logging
+
+logger = logging.getLogger(__name__)
+
+f_han = logging.FileHandler("paramiko_logfile1.log")
+# f_han = logging.StreamHandler()
+f_han.setLevel(logging.DEBUG)
+
+f_format = logging.Formatter('%(asctime)s -%(name)s -%(levelname)s -%(message)s')
+f_han.setFormatter(f_format)
+
+#logger.setLevel(logging.DEBUG)
+logger.addHandler(f_han)
+logger.info("starting test:")
+logger.debug("start debug")
+logger.critical("critical")
+logger.error("error")
+logger.warning("warn")
+
+exit(0)
+
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+hostname = "localhost"
+user = "tester"
+port = 22
+password = "test@123"
+cmnd_list = ["pwd", "ls -l", "netstat | grep tcp", "ifconfig"]
+
+try:
+    client.connect(hostname,port,user,password,look_for_keys=False,allow_agent=False)
+    for cmnd in cmnd_list:
+        stdin, stdout, stderr = client.exec_command(cmnd)
+        logger.info("{} command getting execute".format(cmnd))
+        print("{} got executed".format(cmnd))
+        print(stdout.read().decode('utf-8'))
+
+
+except paramiko.SSHException as p:
+    logging.exception("Error occured:", e)
+    logger.error("Error occured")
+    print(p)
+
+finally:
+    client.close()
+    logger.info("Session closed")
+
+
+
+
+
+
+
